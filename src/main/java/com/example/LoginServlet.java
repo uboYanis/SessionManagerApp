@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -23,41 +26,42 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String[] roles = request.getParameterValues("roles");
+
+		/*
+		 * Session
+		 */
 
 		HttpSession session = request.getSession();
+
 		session.setAttribute("username", username);
 		
-        Integer sessionCount = (Integer) session.getAttribute("sessionCount");
-        if (sessionCount == null) {
-            sessionCount = 1;
-        } else {
-            sessionCount++;
-        }
-        session.setAttribute("sessionCount", sessionCount);
-        
-        session.setAttribute("sessionId", session.getId());
-        
-        /*
-         * Context
-         */
-        
-         ServletContext context = getServletContext();
-        
-        // Récupérer ou initialiser le compteur d'appels
-        Integer usageCount = (Integer) context.getAttribute("usageCount");
-        if (usageCount == null) {
-            usageCount = 0; // Premier appel
-        }
-        usageCount++; // Incrémenter le compteur
-        context.setAttribute("usageCount", usageCount); // Mettre à jour le compteur
-        
-        // Mettre à jour l'horodate du dernier appel
-        String lastAccessTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        context.setAttribute("lastAccessTime", lastAccessTime); // Mettre à jour l'horodate
+		session.setAttribute("roles", roles);
 
-        
+		session.setAttribute("sessionId", session.getId());
+
+		Integer sessionCount = (Integer) session.getAttribute("sessionCount");
+
+		sessionCount = (sessionCount == null) ? 1 : sessionCount + 1;
+
+		session.setAttribute("sessionCount", sessionCount);
+
+		/*
+		 * Context
+		 */
+
+		ServletContext context = getServletContext();
+
+		Integer usageCount = (Integer) context.getAttribute("usageCount");
+
+		usageCount = (usageCount == null) ? 1 : usageCount + 1;
+
+		context.setAttribute("usageCount", usageCount);
+
+		String lastAccessTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+		context.setAttribute("lastAccessTime", lastAccessTime);
+
 		request.getRequestDispatcher("/views/welcome.jsp").forward(request, response);
-
 	}
 }

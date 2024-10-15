@@ -12,6 +12,13 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <br>
+        <label for="roles">Select Roles:</label>
+        <select id="roles" name="roles" multiple size="3">
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+            <option value="guest">Guest</option>
+        </select>
+        <br>
         <input type="submit" value="Login">
     </form>
 </body>
